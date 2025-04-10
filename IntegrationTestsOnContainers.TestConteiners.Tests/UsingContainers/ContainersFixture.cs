@@ -1,6 +1,5 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Images;
-using Microsoft.Data.SqlClient;
 using Testcontainers.MsSql;
 using IContainer = DotNet.Testcontainers.Containers.IContainer;
 
@@ -8,12 +7,14 @@ namespace IntegrationTestsOnContainers.TestContainers.Tests.UsingContainers;
 
 public sealed class ContainersFixture : IAsyncLifetime
 {
-    private const string SqlPassword = "Pass123!";
+    private static string _sqlPassword = Guid.NewGuid().ToString();
     private const int SqlPort = 1433; 
     private const string SqlHost = "Sql_IntegrationTests_Host";
     private const int ApiPort = 11111;
-    public MsSqlContainer SqlContainer { get; private set; } = null!;
-    public IContainer ApiContainer { get; private set; } = null!;
+
+    private MsSqlContainer SqlContainer { get; set; }
+
+    public IContainer ApiContainer { get; private set; }
 
     private readonly IFutureDockerImage _apiImage = new ImageFromDockerfileBuilder()
         .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory(), string.Empty)
@@ -30,7 +31,7 @@ public sealed class ContainersFixture : IAsyncLifetime
             .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
             .WithNetwork(weatherForecastNetwork)
             .WithNetworkAliases(SqlHost)
-            .WithPassword(SqlPassword)
+            .WithPassword(_sqlPassword)
             .WithExposedPort(SqlPort)
             .WithEnvironment("ACCEPT_EULA", "Y")
             .WithName("Sql_IntegrationTests")
@@ -70,6 +71,6 @@ public sealed class ContainersFixture : IAsyncLifetime
 
     private static string GetConnectionString(string dbName, string host, int port)
         => $"Server={host},{port};" +
-           $"User ID=sa;Password={SqlPassword};" +
+           $"User ID=sa;Password={_sqlPassword};" +
            $"Database={dbName};TrustServerCertificate=True;Integrated Security=False";
 }

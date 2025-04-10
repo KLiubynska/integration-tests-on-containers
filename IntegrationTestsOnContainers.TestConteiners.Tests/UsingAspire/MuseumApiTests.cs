@@ -1,29 +1,19 @@
-﻿using System.Net;
+using System.Net;
 using System.Text.Json;
+using Aspire.Hosting.Testing;
 using IntegrationTestsOnContainers.Web.Queries;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Program = IntegrationTestsOnContainers.Web.Program;
 
-namespace IntegrationTestsOnContainers.TestContainers.Tests.UsingApplicationFactory;
+namespace IntegrationTestsOnContainers.TestContainers.Tests.UsingAspire;
 
-public sealed class MuseumsApiWithAppFactoryTests : IClassFixture<DbContainerFixture>, IDisposable
+public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireFixture>, IDisposable
 {
-    private readonly WebApplicationFactory<Program> _webApplicationFactory;
-
-    private readonly HttpClient _httpClient;
-
-    public MuseumsApiWithAppFactoryTests(DbContainerFixture fixture)
-    {
-        var clientOptions = new WebApplicationFactoryClientOptions();
-
-        _webApplicationFactory = new WebApplicationFactory(fixture);
-        _httpClient = _webApplicationFactory.CreateClient(clientOptions);
-    }
-
+    private readonly HttpClient _httpClient = aspireFixture.Application.CreateHttpClient("integrationtestsoncontainers-web");
+     
     [Fact]
     public async Task Get_OpenMuseums_ReturnsCorrectResult()
     {
         // Arrange
+        // Act
         var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
 
         // Assert
@@ -43,6 +33,7 @@ public sealed class MuseumsApiWithAppFactoryTests : IClassFixture<DbContainerFix
     public async Task Get_ClosedMuseums_ReturnsCorrectResult()
     {
         // Arrange
+        // Act
         var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
 
         // Assert
@@ -59,6 +50,6 @@ public sealed class MuseumsApiWithAppFactoryTests : IClassFixture<DbContainerFix
 
     public void Dispose()
     {
-        _webApplicationFactory.Dispose();
+        _httpClient.Dispose();
     }
 }
