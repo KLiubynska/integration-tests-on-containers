@@ -9,8 +9,8 @@ public sealed class ContainersFixture : IAsyncLifetime
 {
     private static string _sqlPassword = Guid.NewGuid().ToString();
     private const int SqlPort = 1433; 
-    private const string SqlHost = "Sql_IntegrationTests_Host";
     private const int ApiPort = 11111;
+    private const string SqlHost = "Sql_IntegrationTests_Host";
 
     private MsSqlContainer SqlContainer { get; set; }
 
