@@ -9,15 +9,11 @@ namespace IntegrationTestsOnContainers.Web.Controllers
     public class MuseumsController(IMediator mediator, ILogger<MuseumsController> logger) : ControllerBase
     {
         [HttpGet("open")]
-        public async Task<IEnumerable<MuseumReadModel>> GetOpen()
-        {
-            return await mediator.Send(new MuseumQuery(true));
-        }
+        public Task<IReadOnlyCollection<MuseumReadModel>> GetOpen() =>
+            mediator.Send(new MuseumQuery(true));
 
         [HttpGet("closed")]
-        public async Task<IEnumerable<MuseumReadModel>> GetCosed()
-        {
-            return await mediator.Send(new MuseumQuery(false));
-        }
+        public Task<IReadOnlyCollection<MuseumReadModel>> GetCosed() =>
+            mediator.Send(new MuseumQuery(false));
     }
 }

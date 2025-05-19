@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using IntegrationTestsOnContainers.ServiceDefaults;
 using IntegrationTestsOnContainers.Web;
 using IntegrationTestsOnContainers.Web.Database;

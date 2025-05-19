@@ -8,8 +8,12 @@ public class MuseumQueryHandler(ApplicationDbContext context) : IRequestHandler<
 {
     public async Task<IReadOnlyCollection<MuseumReadModel>> Handle(MuseumQuery request, CancellationToken cancellationToken)
     {
-        var museums = await context.Museums.Where(x => x.IsOpened == request.IsOpen).ToListAsync(cancellationToken);
+        var museums = await context.Museums
+            .Where(x => x.IsOpened == request.IsOpen)
+            .ToListAsync(cancellationToken);
 
-        return museums.Select(x => new MuseumReadModel(x.Name, x.IsOpened)).ToArray();
+        return museums
+            .Select(x => new MuseumReadModel(x.Name, x.IsOpened))
+            .ToArray();
     }
 }

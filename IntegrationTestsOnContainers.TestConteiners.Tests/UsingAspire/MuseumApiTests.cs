@@ -8,44 +8,57 @@ namespace IntegrationTestsOnContainers.TestContainers.Tests.UsingAspire;
 public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireFixture>, IDisposable
 {
     private readonly HttpClient _httpClient = aspireFixture.Application.CreateHttpClient("integrationtestsoncontainers-web");
-     
+
     [Fact]
-    public async Task Get_OpenMuseums_ReturnsCorrectResult()
+    public async Task Get_OpenMuseums_ReturnsOkResult()
     {
         // Arrange
-        // Act
         var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, museumsResponse.StatusCode);
+    }
 
+    [Fact]
+    public async Task Get_OpenMuseums_ReturnsCorrectResult()
+    {
+        // Arrange
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
+
+        // Act
         var responseData = await museumsResponse.Content.ReadAsStringAsync();
         var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         MuseumReadModel[]? museums = JsonSerializer.Deserialize<IEnumerable<MuseumReadModel>>(responseData, jsonSerializerOptions)?.ToArray();
+       
+        // Assert
+        Assert.Equal("History Museum", museums?.FirstOrDefault()?.Name);
+    }
 
-        Assert.NotNull(museums);
-        Assert.Single(museums);
-        Assert.Equal("History Museum", museums!.First()!.Name);
+    [Fact]
+    public async Task Get_ClosedMuseums_ReturnsOkResult()
+    {
+        // Arrange
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, museumsResponse.StatusCode);
     }
 
     [Fact]
     public async Task Get_ClosedMuseums_ReturnsCorrectResult()
     {
         // Arrange
-        // Act
         var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
 
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, museumsResponse.StatusCode);
-
+        // Act
         var responseData = await museumsResponse.Content.ReadAsStringAsync();
         var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         MuseumReadModel[]? museums = JsonSerializer.Deserialize<IEnumerable<MuseumReadModel>>(responseData, jsonSerializerOptions)?.ToArray();
-
-        Assert.NotNull(museums);
-        Assert.Equal(4, museums.Length);
+        
+        // Assert
+        Assert.Equal(4, museums?.Length);
     }
 
     public void Dispose()

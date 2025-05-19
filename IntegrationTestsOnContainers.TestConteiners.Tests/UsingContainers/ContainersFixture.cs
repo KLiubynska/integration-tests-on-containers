@@ -24,18 +24,17 @@ public sealed class ContainersFixture : IAsyncLifetime
 
     public ContainersFixture()
     {
-        var weatherForecastNetwork = new NetworkBuilder()
+        var integrationTestNetwork = new NetworkBuilder()
             .Build(); 
 
         SqlContainer = new MsSqlBuilder()
             .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-            .WithNetwork(weatherForecastNetwork)
+            .WithNetwork(integrationTestNetwork)
             .WithNetworkAliases(SqlHost)
             .WithPassword(_sqlPassword)
             .WithExposedPort(SqlPort)
             .WithEnvironment("ACCEPT_EULA", "Y")
             .WithName("Sql_IntegrationTests")
-          
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433))
             .Build();
 
@@ -44,7 +43,7 @@ public sealed class ContainersFixture : IAsyncLifetime
             .WithName("MuseumApi_IntegrationTests") 
             .WithEnvironment("ASPNETCORE_HTTP_PORTS", "80")
             .WithPortBinding(ApiPort, 80)
-            .WithNetwork(weatherForecastNetwork)
+            .WithNetwork(integrationTestNetwork)
             .WithExposedPort(ApiPort)
             .WithEnvironment(
                 $"ASPNETCORE_ENVIRONMENT", "Development")
@@ -58,15 +57,16 @@ public sealed class ContainersFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _apiImage.CreateAsync();
-        await SqlContainer.StartAsync(); 
-         
-        await ApiContainer.StartAsync();
+        var sqlStartupTask = SqlContainer.StartAsync();
+        var appStartupTask = ApiContainer.StartAsync();
+        await Task.WhenAll(sqlStartupTask, appStartupTask);
     }
 
     public async Task DisposeAsync()
     {
-        await SqlContainer.DisposeAsync();
-        await ApiContainer.DisposeAsync();
+        var sqlDisposeTask = SqlContainer.DisposeAsync().AsTask();
+        var appDisposeTask = ApiContainer.DisposeAsync().AsTask();
+        await Task.WhenAll(sqlDisposeTask, appDisposeTask);
     }
 
     private static string GetConnectionString(string dbName, string host, int port)
