@@ -34,7 +34,7 @@ public sealed class MuseumsApiOnContainerTests : IClassFixture<ContainersFixture
     public async Task Get_OpenMuseums_ReturnsCorrectResult()
     {
         // Act
-        var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
         var responseData = await museumsResponse.Content.ReadAsStringAsync();
         var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
@@ -48,7 +48,7 @@ public sealed class MuseumsApiOnContainerTests : IClassFixture<ContainersFixture
     public async Task Get_ClosedMuseums_ReturnsOkResult()
     {
         // Act
-        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, museumsResponse.StatusCode);
