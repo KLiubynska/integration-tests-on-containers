@@ -34,7 +34,7 @@ public sealed class MuseumsApiOnContainerTests : IClassFixture<ContainersFixture
     public async Task Get_OpenMuseums_ReturnsCorrectResult()
     {
         // Arrange
-        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
 
         // Act
         var responseData = await museumsResponse.Content.ReadAsStringAsync();

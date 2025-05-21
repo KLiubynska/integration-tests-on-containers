@@ -39,7 +39,7 @@ public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireF
     public async Task Get_ClosedMuseums_ReturnsOkResult()
     {
         // Arrange
-        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, museumsResponse.StatusCode);
