@@ -12,7 +12,7 @@ public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireF
     [Fact]
     public async Task Get_OpenMuseums_ReturnsOkResult()
     {
-        // Arrange
+        // Act
         var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
 
         // Assert
@@ -22,10 +22,8 @@ public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireF
     [Fact]
     public async Task Get_OpenMuseums_ReturnsCorrectResult()
     {
-        // Arrange
-        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
-
         // Act
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/open");
         var responseData = await museumsResponse.Content.ReadAsStringAsync();
         var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
@@ -38,7 +36,7 @@ public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireF
     [Fact]
     public async Task Get_ClosedMuseums_ReturnsOkResult()
     {
-        // Arrange
+        // Act
         var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
 
         // Assert
@@ -48,10 +46,8 @@ public class MuseumApiTests(AspireFixture aspireFixture) : IClassFixture<AspireF
     [Fact]
     public async Task Get_ClosedMuseums_ReturnsCorrectResult()
     {
-        // Arrange
-        var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
-
         // Act
+        var museumsResponse = await _httpClient.GetAsync("/v1/museums/closed");
         var responseData = await museumsResponse.Content.ReadAsStringAsync();
         var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
